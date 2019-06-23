@@ -1,0 +1,26 @@
+{
+  "name": "vc-member",
+  "version": "1.0.0",
+  "description": "members points",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "koa": "^2.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vivishow/vc-members.git"
+  },
+  "keywords": [
+    "members",
+    "points"
+  ],
+  "author": "vivishow",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vivishow/vc-members/issues"
+  },
+  "homepage": "https://github.com/vivishow/vc-members#readme"
+}
