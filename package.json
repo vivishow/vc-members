@@ -4,7 +4,7 @@
   "description": "members points",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "dependencies": {
     "dotenv": "^8.0.0",
@@ -26,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/vivishow/vc-members/issues"
   },
-  "homepage": "https://github.com/vivishow/vc-members#readme"
+  "homepage": "https://github.com/vivishow/vc-members#readme",
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
 }
