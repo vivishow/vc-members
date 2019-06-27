@@ -5,9 +5,14 @@ const router = require("./route");
 
 app.use(bodyParser());
 
-// app.use(async ctx => {
-//   ctx.body = "hello world";
-// });
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (e) {
+    console.log(e);
+    ctx.body = "error";
+  }
+});
 
 app.use(router.routes());
 
