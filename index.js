@@ -10,7 +10,7 @@ app.use(async (ctx, next) => {
     await next();
   } catch (e) {
     console.log(e);
-    ctx.body = "error";
+    ctx.body = `${e}`;
   }
 });
 
