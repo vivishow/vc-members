@@ -4,7 +4,8 @@
   "description": "members points",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "dotenv": "^8.0.0",
