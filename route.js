@@ -8,7 +8,9 @@ const dbname = "vcproject";
 const router = new Router();
 
 router.get("/", async (ctx, next) => {
-  ctx.body = `<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>`;
+  ctx.body = `
+  <h1>hello index</h1>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>`;
 });
 
 router.get("/hello/:name", async (ctx, next) => {
