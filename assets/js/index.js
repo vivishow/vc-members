@@ -21,10 +21,8 @@ $(function() {
           noteName: noteName
         })
         .then(function(res) {
-          $.hidePreloader();
-          $.alert(res.data.data, function() {
-            window.location.reload();
-          });
+          $.toast(res.data.data);
+          window.location.reload();
         });
     }
   });
