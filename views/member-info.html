@@ -1,0 +1,215 @@
+{% extends "base.html" %} {% block pages %}
+
+<div class="page" id="member-info" member-id="{{ _id }}">
+  <header class="bar bar-nav">
+    <a
+      class="icon icon-left pull-left back"
+      href="javascript:history.go(-1);"
+      data-no-cache="false"
+    ></a>
+    <a class="icon icon-refresh pull-right" href="javascript:;"></a>
+    <h1 class="title">会员详情</h1>
+  </header>
+  <div class="content">
+    <div class="content-block-title">基本信息</div>
+    <div class="list-block">
+      <ul>
+        <li class="item-content">
+          <div class="item-inner">
+            <div class="item-title">昵称</div>
+            <div class="item-after" id="nickname">{{ nickName }}</div>
+          </div>
+        </li>
+        <li class="item-content">
+          <div class="item-inner">
+            <div class="item-title">备注</div>
+            <div class="item-after" id="notename">{{ noteName }}</div>
+          </div>
+        </li>
+        <li class="item-content">
+          <div class="item-inner">
+            <div class="item-title">积分</div>
+            <div class="item-after">{{ points }}</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    {% if contact[0] %}
+    <div class="content-block-title" id="member-contacts">联系方式</div>
+    {% for info in contact -%}
+    <div class="card">
+      <div class="card-content">
+        <div class="card-content-inner">
+          {{ info.addr }}，{{ info.name }}，{{ info.phone }}
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="javascript:;" class="copy">复制</a>
+        <a href="javascript:;" class="delete">删除</a>
+      </div>
+    </div>
+    {%- endfor %} {% endif %}
+    <div class="content-block-title" id="member-points-record">积分记录</div>
+    {% for record in pointsRecord -%}
+    <div class="card">
+      <div class="card-content">
+        <div class="card-content-inner">
+          <p>时间：{{ record.createtime }}</p>
+          <p>原因：{{ record.reason }}</p>
+          <p>分值：{{ record.value }}</p>
+        </div>
+      </div>
+    </div>
+    {%- endfor %}
+    <div class="content-block-title">添加积分</div>
+    <div class="list-block">
+      <ul>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">原因</div>
+              <div class="item-input">
+                <input
+                  type="text"
+                  name="points-reason"
+                  id="points-reason"
+                  placeholder="积分修改原因"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">分值</div>
+              <div class="item-input">
+                <input
+                  type="text"
+                  name="points-value"
+                  id="points-value"
+                  placeholder="修改分值"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <a
+        href="javascript:;"
+        id="update-points"
+        class="button button-big button-fill button-success"
+        >确认添加</a
+      >
+    </div>
+    <div class="content-block-title">添加联系方式</div>
+    <div class="list-block">
+      <ul>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">姓名</div>
+              <div class="item-input">
+                <input
+                  type="text"
+                  name="contact-name"
+                  id="add-contact-name"
+                  placeholder="姓名"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">地址</div>
+              <div class="item-input">
+                <input
+                  type="text"
+                  name="contact-addr"
+                  id="add-contact-addr"
+                  placeholder="地址"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">电话</div>
+              <div class="item-input">
+                <input
+                  type="text"
+                  name="contact-phone"
+                  id="add-contact-phone"
+                  placeholder="电话"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <a
+        href="javascript:;"
+        id="add-contact"
+        class="button button-big button-fill button-success"
+        >确认修改</a
+      >
+    </div>
+    <div class="content-block-title">修改信息</div>
+    <div class="list-block">
+      <ul>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">昵称</div>
+              <div class="item-input">
+                <input
+                  type="text"
+                  name="update-nick"
+                  id="update-nickname"
+                  placeholder="新的昵称"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">备注</div>
+              <div class="item-input">
+                <input
+                  type="text"
+                  name="update-note"
+                  id="update-notename"
+                  placeholder="新的备注"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <a
+        href="javascript:;"
+        id="update-name"
+        class="button button-big button-fill button-success"
+        >确认修改</a
+      >
+    </div>
+    <div class="list-block">
+      <a
+        href="javascript:;"
+        id="delete-member"
+        class="button button-big button-fill button-danger"
+        >删除</a
+      >
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block script %}
+<script src="http://{{ host }}/js/member-info.js"></script>
+{% endblock %}
