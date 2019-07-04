@@ -11,11 +11,17 @@ router.get("/", async (ctx, next) => {
 router.get("/member-info/:id", async (ctx, next) => {
   let id = ctx.params.id;
   let host = ctx.request.host;
-  let res = await axios.get(`http://${host}/api/members/${id}`);
-  await ctx.render("member-info", {
-    host: host,
-    ...res.data.data
-  });
+  let res = await axios.get(
+    `https://vc-members.herokuapp.com/api/members/${id}`
+  );
+  if (res.data.status == -1) {
+    ctx.redirect("/");
+  } else {
+    await ctx.render("member-info", {
+      host: host,
+      ...res.data.data
+    });
+  }
   //   ctx.body = res.data.data;
 });
 

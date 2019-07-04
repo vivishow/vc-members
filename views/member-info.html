@@ -4,7 +4,7 @@
   <header class="bar bar-nav">
     <a
       class="icon icon-left pull-left back"
-      href="javascript:history.go(-1);"
+      href="javascript:history.back();"
       data-no-cache="false"
     ></a>
     <a class="icon icon-refresh pull-right" href="javascript:;"></a>
@@ -48,7 +48,7 @@
         <a href="javascript:;" class="delete">删除</a>
       </div>
     </div>
-    {%- endfor %} {% endif %}
+    {%- endfor %} {% endif %} {% if pointsRecord[0] %}
     <div class="content-block-title" id="member-points-record">积分记录</div>
     {% for record in pointsRecord -%}
     <div class="card">
@@ -60,7 +60,7 @@
         </div>
       </div>
     </div>
-    {%- endfor %}
+    {%- endfor %} {% endif %}
     <div class="content-block-title">添加积分</div>
     <div class="list-block">
       <ul>
@@ -155,7 +155,7 @@
         href="javascript:;"
         id="add-contact"
         class="button button-big button-fill button-success"
-        >确认修改</a
+        >确认添加</a
       >
     </div>
     <div class="content-block-title">修改信息</div>
@@ -211,5 +211,90 @@
 </div>
 
 {% endblock %} {% block script %}
-<script src="http://{{ host }}/js/member-info.js"></script>
+<script>
+  $(function() {
+    let id = $(".page").attr("member-id");
+
+    $(".icon-refresh").on("click", function() {
+      $.showPreloader();
+      window.location.reload();
+    });
+
+    $("#update-name").on("click", function() {
+      let nickName = $("input#update-nickname")[0].value,
+        noteName = $("input#update-notename")[0].value,
+        oNickName = $("#nickname")[0].textContent,
+        oNoteName = $("#notename")[0].textContent;
+      if (!noteName && !nickName) {
+        $.alert("请输入昵称或者备注");
+      } else if (
+        (noteName && noteName == oNoteName) ||
+        (nickName && nickName == oNickName)
+      ) {
+        $.alert("请输入不同的昵称或者备注");
+      } else {
+        $.showPreloader();
+        axios
+          .post(`/api/members/${id}`, {
+            nickName: nickName,
+            noteName: noteName
+          })
+          .then(function(res) {
+            $.toast(res.data.data);
+            window.location.reload();
+          });
+      }
+    });
+
+    $("#add-contact").on("click", function() {
+      let name = $("input#add-contact-name")[0].value,
+        addr = $("input#add-contact-addr")[0].value,
+        phone = $("input#add-contact-phone")[0].value;
+      if (!name || !addr || !phone) {
+        $.alert("请输入完整的信息");
+      } else {
+        $.showPreloader();
+        axios
+          .post(`/api/members/${id}/contact`, {
+            name: name,
+            addr: addr,
+            phone: phone
+          })
+          .then(function(res) {
+            $.toast(res.data.data);
+            window.location.reload();
+          });
+      }
+    });
+
+    $("#update-points").on("click", function() {
+      let reason = $("input#points-reason")[0].value,
+        value = $("input#points-value")[0].value;
+      if (!reason || !value) {
+        $.alert("请输入完整信息");
+      } else {
+        $.showPreloader();
+        axios
+          .post(`/api/members/${id}/points`, {
+            reason: reason,
+            value: value
+          })
+          .then(function(res) {
+            $.toast(res.data.data);
+            window.location.reload();
+          });
+      }
+    });
+
+    $("#delete-member").on("click", function() {
+      $.confirm("确定删除吗？", function() {
+        $.showPreloader();
+        axios.delete(`/api/members/${id}`).then(function(res) {
+          $.toast(res.data.data);
+          window.history.back();
+        });
+      });
+    });
+  });
+</script>
 {% endblock %}

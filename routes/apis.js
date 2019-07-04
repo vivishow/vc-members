@@ -7,6 +7,7 @@ const dbname = "vcproject";
 
 const router = new Router();
 
+// 获取查询条件下所有用户信息
 router.get("/api/members", async (ctx, next) => {
   const client = new MongoClient(URI, { useNewUrlParser: true });
   await client.connect();
@@ -45,6 +46,7 @@ router.get("/api/members", async (ctx, next) => {
   ctx.body = { status: 1, data: r };
 });
 
+// 获取指定ID用户信息
 router.get("/api/members/:id", async (ctx, next) => {
   const id = ObjectId(ctx.params.id);
   const client = new MongoClient(URI, { useNewUrlParser: true });
@@ -55,25 +57,24 @@ router.get("/api/members/:id", async (ctx, next) => {
   ctx.body = r ? { status: 1, data: r } : { status: -1, data: "没有这个用户" };
 });
 
+// 添加用户
 router.post("/api/members", async (ctx, next) => {
   const { nickName, noteName } = ctx.request.body;
   let res = { status: -1, data: "出错了" };
-  if (nickName && noteName) {
+  if (nickName) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     const time = new Date();
     await client.connect();
     const col = client.db(dbname).collection("vivi");
     let r = await col.countDocuments({
       nickName: nickName,
-      noteName: noteName
+      noteName: noteName || ""
     });
     if (r !== 0) {
       client.close();
       throw "昵称和备注名已经存在，请修改！";
     } else {
-      let uid = await col.countDocuments({});
       r = await col.insertOne({
-        uid: uid + 1,
         nickName: nickName,
         noteName: noteName,
         contact: [],
@@ -93,6 +94,7 @@ router.post("/api/members", async (ctx, next) => {
   ctx.body = res;
 });
 
+// 添加用户积分记录
 router.post("/api/members/:id/points", async (ctx, next) => {
   const data = ctx.request.body;
   let res = { status: -1, data: "出错了" };
@@ -126,6 +128,7 @@ router.post("/api/members/:id/points", async (ctx, next) => {
   ctx.body = res;
 });
 
+// 添加用户联系方式
 router.post("/api/members/:id/contact", async (ctx, next) => {
   const { addr, name, phone } = ctx.request.body;
   if (addr && phone && name) {
@@ -148,6 +151,7 @@ router.post("/api/members/:id/contact", async (ctx, next) => {
   }
 });
 
+// 修改用户昵称或备注
 router.post("/api/members/:id", async (ctx, next) => {
   const { nickName, noteName } = ctx.request.body;
   if (nickName || noteName) {
@@ -176,6 +180,7 @@ router.post("/api/members/:id", async (ctx, next) => {
   }
 });
 
+// 删除指定ID用户
 router.delete("/api/members/:id", async (ctx, next) => {
   const client = new MongoClient(URI, { useNewUrlParser: true });
   await client.connect();
@@ -187,6 +192,7 @@ router.delete("/api/members/:id", async (ctx, next) => {
     : { status: -1, data: "出错了" };
 });
 
+// 删除指定用户的指定联系方式
 router.delete("/api/members/:id/contact", async (ctx, next) => {
   const { addr, name, phone } = ctx.request.body;
   if (addr && phone && name) {
