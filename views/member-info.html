@@ -36,31 +36,39 @@
     </div>
     {% if contact[0] %}
     <div class="content-block-title" id="member-contacts">联系方式</div>
-    {% for info in contact -%}
-    <div class="card">
-      <div class="card-content">
-        <div class="card-content-inner">
-          {{ info.addr }}，{{ info.name }}，{{ info.phone }}
+    <div class="list-block contacts">
+      {% for info in contact -%}
+      <div class="card">
+        <div class="card-content">
+          <div class="card-content-inner">
+            {{ info.addr }}，{{ info.name }}，{{ info.phone }}
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="javascript:;" class="copy">复制</a>
+          <a href="javascript:;" class="delete">删除</a>
         </div>
       </div>
-      <div class="card-footer">
-        <a href="javascript:;" class="copy">复制</a>
-        <a href="javascript:;" class="delete">删除</a>
-      </div>
+      {%- endfor %}
     </div>
-    {%- endfor %} {% endif %} {% if pointsRecord[0] %}
-    <div class="content-block-title" id="member-points-record">积分记录</div>
-    {% for record in pointsRecord -%}
-    <div class="card">
-      <div class="card-content">
-        <div class="card-content-inner">
-          <p>时间：{{ record.createtime }}</p>
-          <p>原因：{{ record.reason }}</p>
-          <p>分值：{{ record.value }}</p>
+    {% endif %} {% if pointsRecord[0] %}
+    <div class="content-block-title" id="member-points-record">
+      积分记录<span class="pull-right">点击展开或收起</span>
+    </div>
+    <div class="list-block records" style="display: none">
+      {% for record in pointsRecord -%}
+      <div class="card">
+        <div class="card-content">
+          <div class="card-content-inner">
+            <p>时间：{{ record.createtime }}</p>
+            <p>原因：{{ record.reason }}</p>
+            <p>分值：{{ record.value }}</p>
+          </div>
         </div>
       </div>
+      {%- endfor %}
     </div>
-    {%- endfor %} {% endif %}
+    {% endif %}
     <div class="content-block-title">添加积分</div>
     <div class="list-block">
       <ul>
@@ -295,6 +303,14 @@
         });
       });
     });
+
+    $('#member-points-record').on('click', function(){
+      if ($('.list-block.records').css('display')=='none'){
+        $('.list-block.records').css('display','');
+      } else {
+        $('.list-block.records').css('display','none')
+      };
+    })
   });
 </script>
 {% endblock %}
