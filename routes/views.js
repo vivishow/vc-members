@@ -5,7 +5,7 @@ const router = new Router();
 
 router.get("/", async (ctx, next) => {
   let res = await axios.get(`http://${ctx.host}/api/members`);
-  await ctx.render("index", { users: res.data.data });
+  await ctx.render("index", { users: res.data.message });
 });
 
 router.get("/member-info/:id", async (ctx, next) => {
@@ -14,12 +14,12 @@ router.get("/member-info/:id", async (ctx, next) => {
   let res = await axios.get(
     `https://vc-members.herokuapp.com/api/members/${id}`
   );
-  if (res.data.status == -1) {
+  if (res.data.code == -1) {
     ctx.redirect("/");
   } else {
     await ctx.render("member-info", {
       host: host,
-      ...res.data.data
+      ...res.data.message
     });
   }
   //   ctx.body = res.data.data;

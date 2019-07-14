@@ -39,11 +39,10 @@ router.get("/api/members", async (ctx, next) => {
     .limit(Number(limit))
     .sort([[sortName, sort ? 1 : -1]])
     .skip(Number(skip))
-    .project({ pointsRecord: 0 })
     .toArray();
 
   client.close();
-  ctx.body = { status: 1, data: r };
+  ctx.body = { code: 1, message: r };
 });
 
 // 获取指定ID用户信息
@@ -54,13 +53,15 @@ router.get("/api/members/:id", async (ctx, next) => {
   const col = client.db(dbname).collection("vivi");
   let r = await col.findOne({ _id: id });
   client.close();
-  ctx.body = r ? { status: 1, data: r } : { status: -1, data: "没有这个用户" };
+  ctx.body = r
+    ? { code: 1, message: r }
+    : { code: -1, message: "没有这个用户" };
 });
 
 // 添加用户
 router.post("/api/members", async (ctx, next) => {
   const { nickName, noteName } = ctx.request.body;
-  let res = { status: -1, data: "出错了" };
+  let res = { code: -1, message: "出错了" };
   if (nickName) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     const time = new Date();
@@ -85,8 +86,8 @@ router.post("/api/members", async (ctx, next) => {
       });
       client.close();
       res = r.result.ok
-        ? { status: 1, data: "成功" }
-        : { status: -1, data: "出错了" };
+        ? { code: 1, message: "成功" }
+        : { code: -1, message: "出错了" };
     }
   } else {
     throw "nickName is required";
@@ -97,7 +98,7 @@ router.post("/api/members", async (ctx, next) => {
 // 添加用户积分记录
 router.post("/api/members/:id/points", async (ctx, next) => {
   const data = ctx.request.body;
-  let res = { status: -1, data: "出错了" };
+  let res = { code: -1, message: "出错了" };
   if (data.reason && Number(data.value)) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     await client.connect();
@@ -121,7 +122,7 @@ router.post("/api/members/:id/points", async (ctx, next) => {
       }
     );
     client.close();
-    res = r.ok ? { status: 1, data: "成功" } : { status: -1, data: "出错了" };
+    res = r.ok ? { code: 1, message: "成功" } : { code: -1, message: "出错了" };
   } else {
     throw "reason and value is required";
   }
@@ -144,8 +145,8 @@ router.post("/api/members/:id/contact", async (ctx, next) => {
     );
     client.close();
     ctx.body = r.ok
-      ? { status: 1, data: "成功" }
-      : { status: -1, data: "出错了" };
+      ? { code: 1, message: "成功" }
+      : { code: -1, message: "出错了" };
   } else {
     throw "addr and phone is required";
   }
@@ -173,8 +174,8 @@ router.post("/api/members/:id", async (ctx, next) => {
     );
     client.close();
     ctx.body = r.ok
-      ? { status: 1, data: "成功" }
-      : { status: -1, data: "出错了" };
+      ? { code: 1, message: "成功" }
+      : { code: -1, message: "出错了" };
   } else {
     throw "nickName or noteName is required";
   }
@@ -188,8 +189,8 @@ router.delete("/api/members/:id", async (ctx, next) => {
   let r = await col.findOneAndDelete({ _id: ObjectId(ctx.params.id) });
   client.close();
   ctx.body = r.ok
-    ? { status: 1, data: "成功" }
-    : { status: -1, data: "出错了" };
+    ? { code: 1, message: "成功" }
+    : { code: -1, message: "出错了" };
 });
 
 // 删除指定用户的指定联系方式
@@ -214,8 +215,8 @@ router.delete("/api/members/:id/contact", async (ctx, next) => {
 
     client.close();
     ctx.body = r.ok
-      ? { status: 1, data: "成功" }
-      : { status: -1, data: "出错了" };
+      ? { code: 1, message: "成功" }
+      : { code: -1, message: "出错了" };
   } else {
     throw "addr and phone and name are required";
   }

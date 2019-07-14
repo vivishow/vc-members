@@ -16,7 +16,7 @@ app.use(async (ctx, next) => {
     await next();
   } catch (e) {
     console.log(e);
-    ctx.body = { status: -1, data: `${e}` };
+    ctx.body = { code: -1, message: `${e}` };
   }
 });
 
