@@ -131,13 +131,13 @@ router.post("/api/members/:id/points", async (ctx, next) => {
 
 // 添加用户联系方式
 router.post("/api/members/:id/contact", async (ctx, next) => {
-  const { addr, name, phone } = ctx.request.body;
-  if (addr && phone && name) {
+  const { address, name, tel } = ctx.request.body;
+  if (address && tel && name) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     await client.connect();
     const col = client.db(dbname).collection("vivi");
     const time = new Date();
-    let contact = { addr: addr, name: name, phone: phone };
+    let contact = { address: address, name: name, tel: tel };
     let r = await col.findOneAndUpdate(
       { _id: ObjectId(ctx.params.id) },
       { $addToSet: { contact: contact }, $set: { update_on: time } },
@@ -195,8 +195,8 @@ router.delete("/api/members/:id", async (ctx, next) => {
 
 // 删除指定用户的指定联系方式
 router.delete("/api/members/:id/contact", async (ctx, next) => {
-  const { addr, name, phone } = ctx.request.body;
-  if (addr && phone && name) {
+  const { address, name, tel } = ctx.request.body;
+  if (address && tel && name) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     await client.connect();
     const col = client.db(dbname).collection("vivi");
@@ -206,7 +206,7 @@ router.delete("/api/members/:id/contact", async (ctx, next) => {
         _id: ObjectId(ctx.params.id)
       },
       {
-        $pull: { contact: { addr: addr, name: name, phone: phone } },
+        $pull: { contact: { address: address, name: name, tel: tel } },
         $set: { update_on: time }
       },
       { returnOriginal: false }
