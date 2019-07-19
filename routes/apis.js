@@ -211,14 +211,12 @@ router.delete("/api/members/:id/contact", async (ctx, next) => {
       },
       { returnOriginal: false }
     );
-    console.log(r);
-
     client.close();
     ctx.body = r.ok
       ? { code: 1, message: "成功" }
       : { code: -1, message: "出错了" };
   } else {
-    throw "addr and phone and name are required";
+    throw "address and tel and name are required";
   }
 });
 
