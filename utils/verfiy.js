@@ -2,9 +2,8 @@ const jwt = require("jsonwebtoken");
 
 module.exports = function verify() {
   return async (ctx, next) => {
-    if (ctx.request.url == "/api/login" || ctx.request.url == "/") {
-      await next();
-    } else {
+    const url = ctx.request.url;
+    if (/^\/api/.test(url) && url != "/api/login") {
       const token = ctx.request.header.token;
       if (token) {
         try {
@@ -18,6 +17,8 @@ module.exports = function verify() {
       } else {
         ctx.body = { code: -2, message: "认证失败" };
       }
+    } else {
+      await next();
     }
   };
 };
