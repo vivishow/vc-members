@@ -6,10 +6,13 @@ const app = new koa();
 const routerApi = require("./routes/apis");
 const routerView = require("./routes/views");
 const PORT = process.env.PORT || 3000;
+const verify = require("./utils/verfiy");
 
 app.use(view(__dirname + "/views"));
 app.use(static(__dirname + "/assets"));
 app.use(bodyParser());
+
+app.use(verify());
 
 app.use(async (ctx, next) => {
   try {

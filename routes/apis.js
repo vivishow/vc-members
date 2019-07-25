@@ -1,5 +1,6 @@
 require("dotenv").config();
 const Router = require("koa-router");
+const jwt = require("jsonwebtoken");
 const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectId;
 const URI = process.env.DB;
@@ -7,11 +8,28 @@ const dbname = "vcproject";
 
 const router = new Router();
 
+router.post("/api/login", async (ctx, next) => {
+  const client = new MongoClient(URI, { useNewUrlParser: true });
+  await client.connect();
+  const col = client.db(dbname).collection("user");
+
+  const { u_name, pwd } = ctx.request.body;
+  let r = await col.findOne({ u_name: u_name, pwd: pwd });
+  client.close();
+  if (r) {
+    const { u_name, g_name } = r;
+    const token = jwt.sign({ u_name: u_name }, "xx990707", { expiresIn: "1d" });
+    ctx.body = { code: 1, message: "登录成功", token: token, g_name: g_name };
+  } else {
+    ctx.body = { code: -1, message: "用户名或密码错误" };
+  }
+});
+
 // 获取查询条件下所有用户信息
 router.get("/api/members", async (ctx, next) => {
   const client = new MongoClient(URI, { useNewUrlParser: true });
   await client.connect();
-  const col = client.db(dbname).collection("vivi");
+  const col = client.db(dbname).collection(ctx.u_name);
 
   // 模糊查询
   let query = {};
@@ -50,7 +68,7 @@ router.get("/api/members/:id", async (ctx, next) => {
   const id = ObjectId(ctx.params.id);
   const client = new MongoClient(URI, { useNewUrlParser: true });
   await client.connect();
-  const col = client.db(dbname).collection("vivi");
+  const col = client.db(dbname).collection(ctx.u_name);
   let r = await col.findOne({ _id: id });
   client.close();
   ctx.body = r
@@ -66,7 +84,7 @@ router.post("/api/members", async (ctx, next) => {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     const time = new Date();
     await client.connect();
-    const col = client.db(dbname).collection("vivi");
+    const col = client.db(dbname).collection(ctx.u_name);
     let r = await col.countDocuments({
       nickName: nickName,
       noteName: noteName || ""
@@ -102,7 +120,7 @@ router.post("/api/members/:id/points", async (ctx, next) => {
   if (data.reason && Number(data.value)) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     await client.connect();
-    const col = client.db(dbname).collection("vivi");
+    const col = client.db(dbname).collection(ctx.u_name);
     let time = new Date();
     record_time = time.toLocaleDateString();
     const pointsRecord = {
@@ -135,7 +153,7 @@ router.post("/api/members/:id/contact", async (ctx, next) => {
   if (address && tel && name) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     await client.connect();
-    const col = client.db(dbname).collection("vivi");
+    const col = client.db(dbname).collection(ctx.u_name);
     const time = new Date();
     let contact = { address: address, name: name, tel: tel };
     let r = await col.findOneAndUpdate(
@@ -158,7 +176,7 @@ router.post("/api/members/:id", async (ctx, next) => {
   if (nickName || noteName) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     await client.connect();
-    const col = client.db(dbname).collection("vivi");
+    const col = client.db(dbname).collection(ctx.u_name);
     const time = new Date();
     let name = {};
     if (nickName) {
@@ -185,7 +203,7 @@ router.post("/api/members/:id", async (ctx, next) => {
 router.delete("/api/members/:id", async (ctx, next) => {
   const client = new MongoClient(URI, { useNewUrlParser: true });
   await client.connect();
-  const col = client.db(dbname).collection("vivi");
+  const col = client.db(dbname).collection(ctx.u_name);
   let r = await col.findOneAndDelete({ _id: ObjectId(ctx.params.id) });
   client.close();
   ctx.body = r.ok
@@ -199,7 +217,7 @@ router.delete("/api/members/:id/contact", async (ctx, next) => {
   if (address && tel && name) {
     const client = new MongoClient(URI, { useNewUrlParser: true });
     await client.connect();
-    const col = client.db(dbname).collection("vivi");
+    const col = client.db(dbname).collection(ctx.u_name);
     const time = new Date();
     let r = await col.findOneAndUpdate(
       {
@@ -226,8 +244,10 @@ router.post("/api/test", async (ctx, next) => {
   ctx.body = ctx.request.body;
 });
 
-router.get("/api/test/:any", async (ctx, next) => {
+router.get("/api/test", async (ctx, next) => {
   ctx.body = {
+    name: ctx.u_name,
+    request: ctx.request,
     params: ctx.params,
     query: ctx.query,
     querystring: ctx.querystring
