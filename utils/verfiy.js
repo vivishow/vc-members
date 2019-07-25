@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 module.exports = function verify() {
   return async (ctx, next) => {
-    if (ctx.request.url === "/api/login") {
+    if (ctx.request.url == "/api/login" || ctx.request.url == "/") {
       await next();
     } else {
       const token = ctx.request.header.token;
